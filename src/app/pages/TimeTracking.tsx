@@ -1,73 +1,69 @@
-import { Play, Square, Plus, Calendar } from 'lucide-react';
-import { useState } from 'react';
+import { Play, Square, Plus, Calendar, Save } from 'lucide-react';
+import { useTimerContext } from '../context/TimerContext';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '../components/ui/dialog';
-
-const timeEntries = [
-  {
-    id: '1',
-    date: 'Mar 2, 2026',
-    client: 'Robert Smith',
-    case: 'Smith v. Johnson Corp',
-    description: 'Client meeting to discuss discovery strategy',
-    hours: 2.5,
-    rate: 400,
-    amount: 1000,
-    billable: true,
-    attorney: 'John Doe',
-  },
-  {
-    id: '2',
-    date: 'Mar 1, 2026',
-    client: 'TechCo Inc',
-    case: 'Contract Dispute - TechCo',
-    description: 'Research case law for motion to dismiss',
-    hours: 3.0,
-    rate: 400,
-    amount: 1200,
-    billable: true,
-    attorney: 'John Doe',
-  },
-  {
-    id: '3',
-    date: 'Mar 1, 2026',
-    client: 'Sarah Williams',
-    case: 'Estate Planning - Williams',
-    description: 'Draft estate planning documents',
-    hours: 1.5,
-    rate: 350,
-    amount: 525,
-    billable: true,
-    attorney: 'Jane Smith',
-  },
-  {
-    id: '4',
-    date: 'Feb 29, 2026',
-    client: 'Michael Davis',
-    case: 'Personal Injury - Davis',
-    description: 'Review medical records and prepare case summary',
-    hours: 4.0,
-    rate: 375,
-    amount: 1500,
-    billable: true,
-    attorney: 'Emily Johnson',
-  },
-  {
-    id: '5',
-    date: 'Feb 28, 2026',
-    client: 'Robert Smith',
-    case: 'Smith v. Johnson Corp',
-    description: 'Prepare and file motion to dismiss',
-    hours: 5.0,
-    rate: 400,
-    amount: 2000,
-    billable: true,
-    attorney: 'John Doe',
-  },
-];
+import { useState } from 'react';
 
 export function TimeTracking() {
-  const [isTimerRunning, setIsTimerRunning] = useState(false);
-  const [timerSeconds, setTimerSeconds] = useState(0);
+  const [validationMessage, setValidationMessage] = useState<string | null>(null);
+  const {
+    isTimerRunning,
+    setIsTimerRunning,
+    timerSeconds,
+    setTimerSeconds,
+    activeCase,
+    setActiveCase,
+    description,
+    setDescription,
+    hourlyRate,
+    setHourlyRate,
+    timeEntries,
+    setTimeEntries
+  } = useTimerContext();
+
+  const handleStartTimer = () => {
+    if (!activeCase) {
+      setValidationMessage("Please select a Client / Case before starting the timer.");
+      return;
+    }
+    if (!description.trim()) {
+      setValidationMessage("Please provide a description of the work before starting.");
+      return;
+    }
+    
+    setIsTimerRunning(!isTimerRunning);
+  };
+
+  const handleLogAndReset = () => {
+    if (timerSeconds === 0) return;
+
+    const hours = Number((timerSeconds / 3600).toFixed(2));
+    const rate = Number(hourlyRate) || 0;
+    const amount = hours * rate;
+
+    const caseParts = activeCase.split(' - ');
+    const caseName = caseParts[0] || 'Unknown Case';
+    const clientName = caseParts[1] || 'Unknown Client';
+
+    const newEntry = {
+      id: Math.random().toString(36).substr(2, 9),
+      date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+      client: clientName,
+      case: caseName,
+      description,
+      hours,
+      rate,
+      amount,
+      billable: true,
+      attorney: 'Jane Smith', // Mock current user
+    };
+
+    setTimeEntries([newEntry, ...timeEntries]);
+    
+    // Reset Timer
+    setIsTimerRunning(false);
+    setTimerSeconds(0);
+    setDescription('');
+  };
 
   const totalHours = timeEntries.reduce((sum, entry) => sum + entry.hours, 0);
   const totalAmount = timeEntries.reduce((sum, entry) => sum + entry.amount, 0);
@@ -136,18 +132,24 @@ export function TimeTracking() {
           <div>
             <div className="mb-4">
               <label className="block text-sm text-slate-600 mb-2">Client / Case</label>
-              <select className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
-                <option>Select a case...</option>
-                <option>De la Cruz v. Manila Enterprises - Roberto de la Cruz</option>
-                <option>Estate Settlement - Maria Santos</option>
-                <option>Labor Case - TechHub Philippines Inc</option>
-                <option>Illegal Dismissal - Miguel Reyes</option>
+              <select 
+                value={activeCase}
+                onChange={(e) => setActiveCase(e.target.value)}
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              >
+                <option value="">Select a case...</option>
+                <option value="De la Cruz v. Manila Enterprises - Roberto de la Cruz">De la Cruz v. Manila Enterprises - Roberto de la Cruz</option>
+                <option value="Estate Settlement - Maria Santos">Estate Settlement - Maria Santos</option>
+                <option value="Labor Case - TechHub Philippines Inc">Labor Case - TechHub Philippines Inc</option>
+                <option value="Illegal Dismissal - Miguel Reyes">Illegal Dismissal - Miguel Reyes</option>
               </select>
             </div>
             <div className="mb-4">
               <label className="block text-sm text-slate-600 mb-2">Hourly Rate (₱)</label>
               <input
                 type="number"
+                value={hourlyRate}
+                onChange={(e) => setHourlyRate(e.target.value)}
                 className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 placeholder="400"
               />
@@ -155,6 +157,8 @@ export function TimeTracking() {
             <div className="mb-4">
               <label className="block text-sm text-slate-600 mb-2">Description</label>
               <textarea
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
                 className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                 rows={3}
                 placeholder="What are you working on?"
@@ -165,26 +169,38 @@ export function TimeTracking() {
             <div className="text-6xl text-slate-900 mb-6 font-mono">
               {Math.floor(timerSeconds / 3600)}:{String(Math.floor((timerSeconds % 3600) / 60)).padStart(2, '0')}:{String(timerSeconds % 60).padStart(2, '0')}
             </div>
-            <button
-              onClick={() => setIsTimerRunning(!isTimerRunning)}
-              className={`flex items-center gap-2 px-6 py-3 rounded-lg transition-colors ${
-                isTimerRunning
-                  ? 'bg-red-600 hover:bg-red-700 text-white'
-                  : 'bg-green-600 hover:bg-green-700 text-white'
-              }`}
-            >
-              {isTimerRunning ? (
-                <>
-                  <Square className="w-5 h-5" />
-                  Stop Timer
-                </>
-              ) : (
-                <>
-                  <Play className="w-5 h-5" />
-                  Start Timer
-                </>
+            <div className="flex gap-2">
+              <button
+                onClick={handleStartTimer}
+                className={`flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-lg transition-colors ${
+                  isTimerRunning
+                    ? 'bg-red-600 hover:bg-red-700 text-white'
+                    : 'bg-green-600 hover:bg-green-700 text-white'
+                }`}
+              >
+                {isTimerRunning ? (
+                  <>
+                    <Square className="w-5 h-5" />
+                    Pause Timer
+                  </>
+                ) : (
+                  <>
+                    <Play className="w-5 h-5" />
+                    {timerSeconds > 0 ? 'Resume Timer' : 'Start Timer'}
+                  </>
+                )}
+              </button>
+              
+              {timerSeconds > 0 && (
+                <button
+                  onClick={handleLogAndReset}
+                  className="flex-1 flex items-center justify-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                >
+                  <Save className="w-5 h-5" />
+                  Log & Reset
+                </button>
               )}
-            </button>
+            </div>
           </div>
         </div>
       </div>
@@ -258,6 +274,25 @@ export function TimeTracking() {
           </table>
         </div>
       </div>
+
+      <Dialog open={!!validationMessage} onOpenChange={(open) => !open && setValidationMessage(null)}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Action Required</DialogTitle>
+            <DialogDescription>
+              {validationMessage}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <button
+              onClick={() => setValidationMessage(null)}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+            >
+              OK
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
