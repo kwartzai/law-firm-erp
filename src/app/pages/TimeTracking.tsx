@@ -1,5 +1,6 @@
 import { Play, Square, Plus, Calendar } from 'lucide-react';
 import { useState } from 'react';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '../components/ui/dialog';
 
 const timeEntries = [
   {
@@ -78,10 +79,54 @@ export function TimeTracking() {
           <h1 className="text-2xl text-slate-900">Time Tracking</h1>
           <p className="text-slate-600">Track billable hours and manage time entries</p>
         </div>
-        <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-          <Plus className="w-4 h-4" />
-          Manual Entry
-        </button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+              <Plus className="w-4 h-4" />
+              Manual Entry
+            </button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Add Manual Time Entry</DialogTitle>
+              <DialogDescription>
+                Record your billable hours manually.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="space-y-2">
+                <label htmlFor="case-client" className="text-sm font-medium">Case / Client</label>
+                <select id="case-client" className="w-full px-3 py-2 border rounded-lg bg-white">
+                  <option value="">Select Case...</option>
+                  {Array.from(new Set(timeEntries.map(t => `${t.case} - ${t.client}`))).map(option => (
+                    <option key={option} value={option}>{option}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <label htmlFor="date" className="text-sm font-medium">Date</label>
+                  <input id="date" type="date" className="w-full px-3 py-2 border rounded-lg" />
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="duration" className="text-sm font-medium">Duration (hrs)</label>
+                  <input id="duration" type="number" step="0.5" className="w-full px-3 py-2 border rounded-lg" placeholder="1.0" />
+                </div>
+                <div className="space-y-2">
+                  <label htmlFor="rate" className="text-sm font-medium">Hourly Rate (₱)</label>
+                  <input id="rate" type="number" className="w-full px-3 py-2 border rounded-lg" placeholder="400" />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="description" className="text-sm font-medium">Description</label>
+                <textarea id="description" className="w-full px-3 py-2 border rounded-lg" placeholder="What did you work on?"></textarea>
+              </div>
+            </div>
+            <DialogFooter>
+              <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Save Entry</button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
 
       {/* Timer Card */}
@@ -98,6 +143,14 @@ export function TimeTracking() {
                 <option>Labor Case - TechHub Philippines Inc</option>
                 <option>Illegal Dismissal - Miguel Reyes</option>
               </select>
+            </div>
+            <div className="mb-4">
+              <label className="block text-sm text-slate-600 mb-2">Hourly Rate (₱)</label>
+              <input
+                type="number"
+                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                placeholder="400"
+              />
             </div>
             <div className="mb-4">
               <label className="block text-sm text-slate-600 mb-2">Description</label>

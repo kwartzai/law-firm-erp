@@ -1,6 +1,7 @@
 import { Link } from 'react-router';
 import { Search, Plus, Mail, Phone, Building } from 'lucide-react';
 import { useState } from 'react';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '../components/ui/dialog';
 
 const clientsData = [
   {
@@ -84,10 +85,46 @@ export function Clients() {
           <h1 className="text-2xl text-slate-900">Clients</h1>
           <p className="text-slate-600">Manage your client relationships</p>
         </div>
-        <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-          <Plus className="w-4 h-4" />
-          Add Client
-        </button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+              <Plus className="w-4 h-4" />
+              Add Client
+            </button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Add New Client</DialogTitle>
+              <DialogDescription>
+                Enter the details of the new client here. Click save when you're done.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="space-y-2">
+                <label htmlFor="name" className="text-sm font-medium">Name</label>
+                <input id="name" className="w-full px-3 py-2 border rounded-lg" placeholder="Juan dela Cruz" />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="email" className="text-sm font-medium">Email</label>
+                <input id="email" type="email" className="w-full px-3 py-2 border rounded-lg" placeholder="juan@example.ph" />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="phone" className="text-sm font-medium">Phone</label>
+                <input id="phone" type="tel" className="w-full px-3 py-2 border rounded-lg" placeholder="+63 917 123 4567" />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="type" className="text-sm font-medium">Client Type</label>
+                <select id="type" className="w-full px-3 py-2 border rounded-lg bg-white">
+                  <option>Individual</option>
+                  <option>Corporate</option>
+                </select>
+              </div>
+            </div>
+            <DialogFooter>
+              <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Save changes</button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
 
       <div className="bg-white border border-slate-200 rounded-lg">

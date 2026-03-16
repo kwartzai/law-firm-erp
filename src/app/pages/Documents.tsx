@@ -1,5 +1,6 @@
 import { Search, Plus, FileText, File, Download, Folder } from 'lucide-react';
 import { useState } from 'react';
+import { UploadDocumentModal } from '../components/modals/UploadDocumentModal';
 
 const documents = [
   {
@@ -106,10 +107,7 @@ export function Documents() {
           <h1 className="text-2xl text-slate-900">Documents</h1>
           <p className="text-slate-600">Manage all case documents and files</p>
         </div>
-        <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-          <Plus className="w-4 h-4" />
-          Upload Document
-        </button>
+        <UploadDocumentModal documents={documents} />
       </div>
 
       {/* Stats */}

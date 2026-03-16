@@ -1,6 +1,7 @@
 import { Link } from 'react-router';
 import { Search, Plus, Filter } from 'lucide-react';
 import { useState } from 'react';
+import { NewCaseModal } from '../components/modals/NewCaseModal';
 
 const casesData = [
   {
@@ -87,10 +88,7 @@ export function Cases() {
           <h1 className="text-2xl text-slate-900">Cases</h1>
           <p className="text-slate-600">Manage all case files and proceedings</p>
         </div>
-        <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-          <Plus className="w-4 h-4" />
-          New Case
-        </button>
+        <NewCaseModal casesData={casesData} />
       </div>
 
       <div className="bg-white border border-slate-200 rounded-lg">

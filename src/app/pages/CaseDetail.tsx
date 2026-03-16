@@ -1,5 +1,7 @@
 import { useParams, Link } from 'react-router';
 import { ArrowLeft, Calendar, User, AlertCircle, FileText, Clock } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '../components/ui/dialog';
+import { UploadDocumentModal } from '../components/modals/UploadDocumentModal';
 
 const caseData = {
   '1': {
@@ -151,9 +153,11 @@ export function CaseDetail() {
           <div className="bg-white border border-slate-200 rounded-lg">
             <div className="flex items-center justify-between p-6 border-b border-slate-200">
               <h2 className="text-lg text-slate-900">Documents</h2>
-              <button className="text-sm text-blue-600 hover:text-blue-700">
-                Upload Document
-              </button>
+              <UploadDocumentModal 
+                documents={[]} 
+                defaultCase={case_.name}
+                trigger={<button className="text-sm text-blue-600 hover:text-blue-700">Upload Document</button>}
+              />
             </div>
             <div className="divide-y divide-slate-200">
               {case_.documents.map((doc) => (
@@ -168,9 +172,28 @@ export function CaseDetail() {
                         </div>
                       </div>
                     </div>
-                    <button className="text-sm text-blue-600 hover:text-blue-700">
-                      View
-                    </button>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <button className="text-sm text-blue-600 hover:text-blue-700">
+                          View
+                        </button>
+                      </DialogTrigger>
+                      <DialogContent className="sm:max-w-[425px]">
+                        <DialogHeader>
+                          <DialogTitle>View Document: {doc.name}</DialogTitle>
+                          <DialogDescription>
+                            Document details for {doc.name} ({doc.size}).
+                          </DialogDescription>
+                        </DialogHeader>
+                        <div className="py-4 flex justify-center items-center h-32 bg-slate-50 border border-slate-200 rounded-lg">
+                          <p className="text-slate-500 italic">Document preview not available in demo.</p>
+                        </div>
+                        <DialogFooter>
+                          <button className="px-4 py-2 border border-slate-300 text-slate-700 rounded-lg hover:bg-slate-50">Close</button>
+                          <button className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Download</button>
+                        </DialogFooter>
+                      </DialogContent>
+                    </Dialog>
                   </div>
                 </div>
               ))}
@@ -181,9 +204,30 @@ export function CaseDetail() {
           <div className="bg-white border border-slate-200 rounded-lg">
             <div className="flex items-center justify-between p-6 border-b border-slate-200">
               <h2 className="text-lg text-slate-900">Case Notes</h2>
-              <button className="text-sm text-blue-600 hover:text-blue-700">
-                Add Note
-              </button>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button className="text-sm text-blue-600 hover:text-blue-700">
+                    Add Note
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Add Case Note</DialogTitle>
+                    <DialogDescription>
+                      Add a new note or update to the case file.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="py-4 space-y-4">
+                    <div className="space-y-2">
+                      <label htmlFor="note-content" className="text-sm font-medium">Note</label>
+                      <textarea id="note-content" className="w-full px-3 py-2 border rounded-lg" rows={4} placeholder="Type your note here..."></textarea>
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Save Note</button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </div>
             <div className="p-6 space-y-4">
               {case_.notes.map((note, index) => (
@@ -230,18 +274,109 @@ export function CaseDetail() {
           <div className="bg-white border border-slate-200 rounded-lg p-6">
             <h2 className="text-lg text-slate-900 mb-4">Quick Actions</h2>
             <div className="space-y-2">
-              <button className="w-full flex items-center gap-3 px-4 py-2 text-left border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors">
-                <Calendar className="w-4 h-4 text-slate-600" />
-                <span className="text-slate-900">Schedule Event</span>
-              </button>
-              <button className="w-full flex items-center gap-3 px-4 py-2 text-left border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors">
-                <FileText className="w-4 h-4 text-slate-600" />
-                <span className="text-slate-900">Generate Report</span>
-              </button>
-              <button className="w-full flex items-center gap-3 px-4 py-2 text-left border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors">
-                <User className="w-4 h-4 text-slate-600" />
-                <span className="text-slate-900">View Client</span>
-              </button>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button className="w-full flex items-center gap-3 px-4 py-2 text-left border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors">
+                    <Calendar className="w-4 h-4 text-slate-600" />
+                    <span className="text-slate-900">Schedule Event</span>
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Schedule Event</DialogTitle>
+                    <DialogDescription>
+                      Schedule a new event for this case.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="py-4 space-y-4">
+                    <div className="space-y-2">
+                      <label htmlFor="event-title" className="text-sm font-medium">Event Title</label>
+                      <input id="event-title" className="w-full px-3 py-2 border rounded-lg" placeholder="Event title" />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <label htmlFor="event-date" className="text-sm font-medium">Date</label>
+                        <input id="event-date" type="date" className="w-full px-3 py-2 border rounded-lg" />
+                      </div>
+                      <div className="space-y-2">
+                        <label htmlFor="event-time" className="text-sm font-medium">Time</label>
+                        <input id="event-time" type="time" className="w-full px-3 py-2 border rounded-lg" />
+                      </div>
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Save Event</button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button className="w-full flex items-center gap-3 px-4 py-2 text-left border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors">
+                    <FileText className="w-4 h-4 text-slate-600" />
+                    <span className="text-slate-900">Generate Report</span>
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Generate Report</DialogTitle>
+                    <DialogDescription>
+                      Generate a report for {case_.name}.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="py-4 space-y-4">
+                    <div className="space-y-2">
+                      <label htmlFor="report-type" className="text-sm font-medium">Report Type</label>
+                      <select id="report-type" className="w-full px-3 py-2 border rounded-lg bg-white">
+                        <option>Case Summary</option>
+                        <option>Financial Report</option>
+                        <option>Timeline Export</option>
+                      </select>
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Generate</button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button className="w-full flex items-center gap-3 px-4 py-2 text-left border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors">
+                    <User className="w-4 h-4 text-slate-600" />
+                    <span className="text-slate-900">View Client</span>
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                  <DialogHeader>
+                    <DialogTitle>Client Details: {case_.client}</DialogTitle>
+                    <DialogDescription>
+                      Quick overview of the client associated with this case.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="py-4 space-y-4">
+                    <div className="grid grid-cols-2 gap-4 text-sm">
+                      <div>
+                        <span className="block text-slate-500">Name</span>
+                        <span className="block text-slate-900 font-medium">{case_.client}</span>
+                      </div>
+                      <div>
+                        <span className="block text-slate-500">Status</span>
+                        <span className="block text-slate-900 font-medium">Active</span>
+                      </div>
+                      <div>
+                        <span className="block text-slate-500">Contact</span>
+                        <span className="block text-slate-900 font-medium">Click "View Full Profile"</span>
+                      </div>
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Link to="/clients/1" className="w-full">
+                      <button className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">View Full Profile</button>
+                    </Link>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
             </div>
           </div>
         </div>

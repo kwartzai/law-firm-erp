@@ -1,5 +1,6 @@
 import { Search, Plus, Download, Send } from 'lucide-react';
 import { useState } from 'react';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '../components/ui/dialog';
 
 const invoices = [
   {
@@ -75,10 +76,48 @@ export function Billing() {
           <h1 className="text-2xl text-slate-900">Billing & Invoices</h1>
           <p className="text-slate-600">Manage invoices and track payments</p>
         </div>
-        <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-          <Plus className="w-4 h-4" />
-          Create Invoice
-        </button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+              <Plus className="w-4 h-4" />
+              Create Invoice
+            </button>
+          </DialogTrigger>
+          <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+              <DialogTitle>Create New Invoice</DialogTitle>
+              <DialogDescription>
+                Fill in the details for the new invoice.
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+              <div className="space-y-2">
+                <label htmlFor="client" className="text-sm font-medium">Client</label>
+                <select id="client" className="w-full px-3 py-2 border rounded-lg bg-white">
+                  <option value="">Select Client...</option>
+                  {Array.from(new Set(invoices.map(i => i.client))).map(client => (
+                    <option key={client} value={client}>{client}</option>
+                  ))}
+                </select>
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="amount" className="text-sm font-medium">Amount</label>
+                <input id="amount" type="number" className="w-full px-3 py-2 border rounded-lg" placeholder="0.00" />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="dueDate" className="text-sm font-medium">Due Date</label>
+                <input id="dueDate" type="date" className="w-full px-3 py-2 border rounded-lg" />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="description" className="text-sm font-medium">Description</label>
+                <textarea id="description" className="w-full px-3 py-2 border rounded-lg" placeholder="Invoice details..."></textarea>
+              </div>
+            </div>
+            <DialogFooter>
+              <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Save Invoice</button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
 
       {/* Summary Stats */}
