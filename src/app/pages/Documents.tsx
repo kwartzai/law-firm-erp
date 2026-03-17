@@ -58,6 +58,7 @@ const recentFiles = [
     status: "PENDING",
     statusType: "pending",
     modified: "6 Mar 2026",
+    matter: "Oakridge Title Transfer"
   },
   {
     id: 6,
@@ -66,6 +67,7 @@ const recentFiles = [
     status: "REVIEW",
     statusType: "review",
     modified: "5 Mar 2026",
+    matter: "Corporate Retainer"
   },
 ];
 
@@ -119,22 +121,46 @@ export function Documents() {
             and firm legal templates.
           </p>
         </div>
-        <div className="flex items-center gap-3 mt-2">
-          <button
-            className="flex items-center gap-2 border border-[rgba(26,26,26,0.2)] px-5 py-2.5 text-[12px] font-semibold tracking-[0.5px] uppercase text-[#1a1a1a] hover:bg-[rgba(26,26,26,0.04)] transition-colors"
-            style={{ fontFamily: "'Inter', sans-serif" }}
-          >
-            <FolderPlus size={13} />
-            New Folder
-          </button>
-          <button
-            onClick={() => setShowUpload(true)}
-            className="flex items-center gap-2 bg-[#1a1a1a] text-white px-5 py-2.5 text-[12px] font-semibold tracking-[0.5px] uppercase hover:bg-[#333] transition-colors"
-            style={{ fontFamily: "'Inter', sans-serif" }}
-          >
-            <Upload size={13} />
-            Upload
-          </button>
+        <div className="flex flex-col items-start sm:items-end gap-4 mt-2">
+          <div className="flex items-center gap-3">
+            <button
+              className="flex items-center gap-2 border border-[rgba(26,26,26,0.2)] px-5 py-2.5 text-[12px] font-semibold tracking-[0.5px] uppercase text-[#1a1a1a] hover:bg-[rgba(26,26,26,0.04)] transition-colors"
+              style={{ fontFamily: "'Inter', sans-serif" }}
+            >
+              <FolderPlus size={13} />
+              New Folder
+            </button>
+            <button
+              onClick={() => setShowUpload(true)}
+              className="flex items-center gap-2 bg-[#1a1a1a] text-white px-5 py-2.5 text-[12px] font-semibold tracking-[0.5px] uppercase hover:bg-[#333] transition-colors"
+              style={{ fontFamily: "'Inter', sans-serif" }}
+            >
+              <Upload size={13} />
+              Upload
+            </button>
+          </div>
+          
+          {/* Storage Indicator */}
+          <div className="w-full sm:text-right mt-1">
+            <div className="flex justify-between sm:justify-end gap-4 items-baseline mb-1">
+              <p
+                className="text-[10px] font-semibold tracking-[1.5px] uppercase text-[rgba(26,26,26,0.4)]"
+                style={{ fontFamily: "'Inter', sans-serif" }}
+              >
+                Storage Used
+              </p>
+              <p
+                className="text-[13px] font-medium text-[#1a1a1a]"
+                style={{ fontFamily: "'Inter', sans-serif" }}
+              >
+                128.5 <span className="text-[rgba(26,26,26,0.5)] font-normal text-[11px]">/ 500 GB</span>
+              </p>
+            </div>
+            {/* Progress bar */}
+            <div className="w-full sm:w-[260px] h-1.5 bg-[rgba(26,26,26,0.08)] sm:ml-auto">
+              <div className="h-full bg-[#1a1a1a]" style={{ width: "25.7%" }} />
+            </div>
+          </div>
         </div>
       </div>
 
@@ -216,9 +242,10 @@ export function Documents() {
 
         <div className="overflow-x-auto"><div className="bg-white border border-[rgba(26,26,26,0.1)] border-t-0 shadow-sm min-w-[620px]">
           {/* Header */}
-          <div className="grid grid-cols-[3fr_1fr_100px_120px_60px] border-b border-[rgba(26,26,26,0.08)] px-6 py-4">
+          <div className="grid grid-cols-[2.5fr_1fr_1fr_100px_120px_60px] border-b border-[rgba(26,26,26,0.08)] px-6 py-4">
             {[
               "Document Name",
+              "Case Associated With",
               "Type",
               "Status",
               "Last Modified",
@@ -226,7 +253,7 @@ export function Documents() {
             ].map((h, i) => (
               <span
                 key={h}
-                className={`text-[10px] font-bold tracking-[1.5px] uppercase text-[rgba(26,26,26,0.4)] ${i === 4 ? "text-center" : ""}`}
+                className={`text-[10px] font-bold tracking-[1.5px] uppercase text-[rgba(26,26,26,0.4)] ${i === 5 ? "text-center" : ""}`}
                 style={{ fontFamily: "'Inter', sans-serif" }}
               >
                 {h}
@@ -237,7 +264,7 @@ export function Documents() {
           {filtered.map((file) => (
             <div
               key={file.id}
-              className="grid grid-cols-[3fr_1fr_100px_120px_60px] border-b border-[rgba(26,26,26,0.05)] px-6 py-5 hover:bg-[rgba(26,26,26,0.015)] cursor-pointer transition-colors items-center"
+              className="grid grid-cols-[2.5fr_1fr_1fr_100px_120px_60px] border-b border-[rgba(26,26,26,0.05)] px-6 py-5 hover:bg-[rgba(26,26,26,0.015)] cursor-pointer transition-colors items-center"
             >
               <div className="flex items-center gap-3">
                 <FileText
@@ -251,6 +278,12 @@ export function Documents() {
                   {file.name}
                 </span>
               </div>
+              <span
+                className="text-[13px] text-[rgba(26,26,26,0.65)] truncate"
+                style={{ fontFamily: "'Inter', sans-serif" }}
+              >
+                {file.matter || "—"}
+              </span>
               <span
                 className="text-[11px] tracking-[0.5px] text-[rgba(26,26,26,0.5)] uppercase"
                 style={{ fontFamily: "'Inter', sans-serif" }}
@@ -328,6 +361,27 @@ export function Documents() {
               >
                 PDF, DOCX, XLSX up to 50MB
               </p>
+            </div>
+            
+            <div className="mb-8 flex flex-col gap-4">
+               <div>
+                  <label className="block text-[10px] font-bold tracking-[1.2px] uppercase text-[rgba(26,26,26,0.4)] mb-2" style={{ fontFamily: "'Inter', sans-serif" }}>Associate with Case / Matter</label>
+                  <select className="w-full border border-[rgba(26,26,26,0.15)] px-4 py-2.5 text-[13px] text-[#1a1a1a] bg-white outline-none focus:border-[#1a1a1a] transition-colors" style={{ fontFamily: "'Inter', sans-serif" }}>
+                     <option value="">None</option>
+                     <option value="1">Estate of Francisco Dela Cruz</option>
+                     <option value="2">Isla Tech v. Mendoza</option>
+                     <option value="3">People v. Thompson</option>
+                  </select>
+               </div>
+               <div>
+                  <label className="block text-[10px] font-bold tracking-[1.2px] uppercase text-[rgba(26,26,26,0.4)] mb-2" style={{ fontFamily: "'Inter', sans-serif" }}>Associate with Client</label>
+                  <select className="w-full border border-[rgba(26,26,26,0.15)] px-4 py-2.5 text-[13px] text-[#1a1a1a] bg-white outline-none focus:border-[#1a1a1a] transition-colors" style={{ fontFamily: "'Inter', sans-serif" }}>
+                     <option value="">None</option>
+                     <option value="1">Maria Angelica Santos</option>
+                     <option value="2">Eduardo Villanueva</option>
+                     <option value="3">Isla Tech Corp.</option>
+                  </select>
+               </div>
             </div>
             <div className="flex gap-3">
               <button

@@ -159,7 +159,7 @@ export function Root() {
           <div className="flex items-center gap-3">
             <img src={logo} alt="Cassie logo" className="h-8 w-auto" />
             <span className="text-[11px] text-[rgba(26,26,26,0.4)] tracking-[1px] uppercase ml-2">
-              © 2026 Philippine Law ERP
+              © 2026 Cassie Systems
             </span>
           </div>
           <div className="flex items-center gap-6">

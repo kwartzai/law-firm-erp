@@ -142,39 +142,41 @@ export function Billing() {
           {
             label: "Outstanding",
             value: "₱2,842,850.00",
-            trend: "+12.4% from last month",
+            trend: "+12.4% FROM LAST MONTH",
           },
           {
             label: "Total Billed",
             value: "₱8,128,400.00",
-            trend: "+8.1% from last month",
+            trend: "+8.1% FROM LAST MONTH",
           },
           {
             label: "Payments Received",
             value: "₱5,285,550.00",
-            trend: "+5.2% from last month",
+            trend: "+5.2% FROM LAST MONTH",
           },
         ].map((s, i) => (
           <div
             key={s.label}
-            className={`px-6 sm:px-10 py-8 sm:py-10 ${i < 2 ? "border-b sm:border-b-0 sm:border-r border-[rgba(26,26,26,0.08)]" : ""}`}
+            className={`px-6 sm:px-10 py-8 sm:py-10 flex flex-col justify-between ${i < 2 ? "border-b sm:border-b-0 sm:border-r border-[rgba(26,26,26,0.1)]" : ""}`}
           >
-            <p
-              className="text-[11px] tracking-[2.4px] uppercase text-[#666] mb-4"
-              style={{ fontFamily: "'Inter', sans-serif" }}
-            >
-              {s.label}
-            </p>
-            <p
-              className="text-[34px] text-[#111] mb-3"
-              style={{ fontFamily: "'Lora', serif" }}
-            >
-              {s.value}
-            </p>
-            <div className="flex items-center gap-2">
-              <TrendingUp size={11} className="text-[#71717a]" />
+            <div>
+              <p
+                className="text-[14px] text-[rgba(26,26,26,0.6)] mb-2"
+                style={{ fontFamily: "'Inter', sans-serif", fontWeight: 500 }}
+              >
+                {s.label}
+              </p>
+              <p
+                className="text-[36px] text-[#1a1a1a]"
+                style={{ fontFamily: "'Lora', serif", lineHeight: 1.1 }}
+              >
+                {s.value}
+              </p>
+            </div>
+            <div className="flex items-center gap-2 mt-8">
+              <TrendingUp size={11} className="text-[#15803d]" />
               <span
-                className="text-[12px] font-medium text-[#71717a]"
+                className="text-[11px] tracking-[0.6px] font-semibold text-[#15803d]"
                 style={{ fontFamily: "'Inter', sans-serif" }}
               >
                 {s.trend}

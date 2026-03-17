@@ -170,62 +170,141 @@ export function Calendar() {
             </div>
           </div>
 
-          {/* Calendar Grid */}
+          {/* Calendar Grid Views */}
           <div className="bg-white border border-[rgba(26,26,26,0.1)] shadow-sm">
-            {/* Day headers */}
-            <div className="grid grid-cols-7 border-b border-[rgba(26,26,26,0.08)]">
-              {DAYS.map((d) => (
-                <div key={d} className="py-3 text-center">
-                  <span
-                    className="text-[10px] font-bold tracking-[1.2px] uppercase text-[rgba(26,26,26,0.4)]"
-                    style={{ fontFamily: "'Inter', sans-serif" }}
-                  >
-                    {d}
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            {/* Days Grid */}
-            <div className="grid grid-cols-7">
-              {cells.map((day, idx) => (
-                <div
-                  key={idx}
-                  className={`min-h-[90px] border-b border-r border-[rgba(26,26,26,0.06)] p-2 ${
-                    day
-                      ? "cursor-pointer hover:bg-[rgba(26,26,26,0.02)]"
-                      : "opacity-30"
-                  } ${idx % 7 === 6 ? "border-r-0" : ""}`}
-                >
-                  {day && (
-                    <>
-                      <div
-                        className={`w-7 h-7 flex items-center justify-center mb-1 ${
-                          day === 5 ? "bg-[#1a1a1a] text-white" : ""
-                        }`}
+            
+            {activeView === "MONTH" && (
+              <>
+                {/* Day headers */}
+                <div className="grid grid-cols-7 border-b border-[rgba(26,26,26,0.08)]">
+                  {DAYS.map((d) => (
+                    <div key={d} className="py-3 text-center">
+                      <span
+                        className="text-[10px] font-bold tracking-[1.2px] uppercase text-[rgba(26,26,26,0.4)]"
+                        style={{ fontFamily: "'Inter', sans-serif" }}
                       >
-                        <span
-                          className={`text-[13px] ${day === 5 ? "text-white" : "text-[rgba(26,26,26,0.7)]"}`}
-                          style={{ fontFamily: "'Inter', sans-serif" }}
-                        >
-                          {day}
-                        </span>
-                      </div>
-                      {calendarEvents[day] && (
-                        <div className="bg-[rgba(26,26,26,0.07)] px-1.5 py-0.5 mt-1">
-                          <span
-                            className="text-[9px] font-bold tracking-[0.5px] uppercase text-[rgba(26,26,26,0.6)]"
-                            style={{ fontFamily: "'Inter', sans-serif" }}
-                          >
-                            {calendarEvents[day]}
-                          </span>
-                        </div>
-                      )}
-                    </>
-                  )}
+                        {d}
+                      </span>
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+
+                {/* Days Grid */}
+                <div className="grid grid-cols-7">
+                  {cells.map((day, idx) => (
+                    <div
+                      key={idx}
+                      className={`min-h-[90px] border-b border-r border-[rgba(26,26,26,0.06)] p-2 ${
+                        day ? "cursor-pointer hover:bg-[rgba(26,26,26,0.02)]" : "opacity-30"
+                      } ${idx % 7 === 6 ? "border-r-0" : ""}`}
+                    >
+                      {day && (
+                        <>
+                          <div
+                            className={`w-7 h-7 flex items-center justify-center mb-1 ${
+                              day === 5 ? "bg-[#1a1a1a] text-white" : ""
+                            }`}
+                          >
+                            <span
+                              className={`text-[13px] ${day === 5 ? "text-white" : "text-[rgba(26,26,26,0.7)]"}`}
+                              style={{ fontFamily: "'Inter', sans-serif" }}
+                            >
+                              {day}
+                            </span>
+                          </div>
+                          {calendarEvents[day] && (
+                            <div className="bg-[rgba(26,26,26,0.07)] px-1.5 py-0.5 mt-1">
+                              <span
+                                className="text-[9px] font-bold tracking-[0.5px] uppercase text-[rgba(26,26,26,0.6)]"
+                                style={{ fontFamily: "'Inter', sans-serif" }}
+                              >
+                                {calendarEvents[day]}
+                              </span>
+                            </div>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+
+            {activeView === "WEEK" && (
+                <div className="flex">
+                    <div className="w-16 shrink-0 border-r border-[rgba(26,26,26,0.08)]">
+                         {/* Time Column Header Empty */}
+                         <div className="h-[46px] border-b border-[rgba(26,26,26,0.08)]"></div>
+                         {/* Times */}
+                         {Array.from({length: 11}, (_, i) => i + 8).map(hour => (
+                             <div key={hour} className="h-16 border-b border-[rgba(26,26,26,0.04)] relative">
+                                 <span className="absolute -top-2.5 right-2 text-[10px] text-[rgba(26,26,26,0.4)]" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                    {hour > 12 ? `${hour-12} PM` : hour === 12 ? '12 PM' : `${hour} AM`}
+                                 </span>
+                             </div>
+                         ))}
+                    </div>
+                    <div className="flex-1 grid grid-cols-5">
+                       {/* Work Week Days */}
+                        {DAYS.slice(1, 6).map((d, i) => (
+                           <div key={d} className={`border-r border-[rgba(26,26,26,0.06)] ${i===4 ? 'border-r-0':''}`}>
+                               {/* Day Header */}
+                               <div className="h-[46px] flex flex-col items-center justify-center border-b border-[rgba(26,26,26,0.08)]">
+                                     <span className="text-[10px] font-bold tracking-[1.2px] uppercase text-[rgba(26,26,26,0.4)] leading-none" style={{ fontFamily: "'Inter', sans-serif" }}>{d}</span>
+                                     <span className="text-[14px] text-[#1a1a1a] mt-1 leading-none font-medium" style={{ fontFamily: "'Inter', sans-serif" }}>{i + 2}</span>
+                               </div>
+                               {/* Grid Spaces */}
+                               <div className="relative">
+                                   {Array.from({length: 11}).map((_, h) => (
+                                     <div key={h} className="h-16 border-b border-[rgba(26,26,26,0.04)]"></div>
+                                   ))}
+                                   {/* Sample Event in Week View */}
+                                   {i === 3 && (
+                                       <div className="absolute top-[64px] left-1 right-1 h-[96px] bg-[rgba(26,26,26,0.04)] border-l-2 border-[#1a1a1a] p-1.5 overflow-hidden group hover:bg-[rgba(26,26,26,0.08)] transition-colors cursor-pointer">
+                                           <p className="text-[10px] font-bold text-[#1a1a1a] leading-tight" style={{ fontFamily: "'Inter', sans-serif" }}>RTC Hearing</p>
+                                           <p className="text-[9px] text-[rgba(26,26,26,0.6)] leading-tight mt-0.5 max-h-[40px]" style={{ fontFamily: "'Inter', sans-serif" }}>Branch 61</p>
+                                       </div>
+                                   )}
+                               </div>
+                           </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+
+            {activeView === "DAY" && (
+                <div className="flex">
+                    <div className="w-16 shrink-0 border-r border-[rgba(26,26,26,0.08)]">
+                         <div className="h-[54px] border-b border-[rgba(26,26,26,0.08)]"></div>
+                         {/* Times */}
+                         {Array.from({length: 11}, (_, i) => i + 8).map(hour => (
+                             <div key={hour} className="h-20 border-b border-[rgba(26,26,26,0.04)] relative">
+                                 <span className="absolute -top-2.5 right-3 text-[10px] text-[rgba(26,26,26,0.4)]" style={{ fontFamily: "'Inter', sans-serif" }}>
+                                    {hour > 12 ? `${hour-12} PM` : hour === 12 ? '12 PM' : `${hour} AM`}
+                                 </span>
+                             </div>
+                         ))}
+                    </div>
+                    <div className="flex-1">
+                        <div className="h-[54px] flex flex-col justify-center border-b border-[rgba(26,26,26,0.08)] px-6">
+                            <span className="text-[11px] font-bold tracking-[1.2px] uppercase text-[rgba(26,26,26,0.4)] leading-none" style={{ fontFamily: "'Inter', sans-serif" }}>Thursday</span>
+                            <span className="text-[18px] text-[#1a1a1a] mt-1.5 leading-none font-medium" style={{ fontFamily: "'Inter', sans-serif" }}>March 5, 2026</span>
+                        </div>
+                        <div className="relative">
+                            {Array.from({length: 11}).map((_, h) => (
+                                <div key={h} className="h-20 border-b border-[rgba(26,26,26,0.04)] px-4 flex flex-col justify-end pb-1 relative group">
+                                    <div className="hidden group-hover:block absolute left-4 right-4 h-0.5 bg-[rgba(26,26,26,0.1)] top-1/2"></div>
+                                </div>
+                            ))}
+                            {/* Sample Event in Day View */}
+                             <div className="absolute top-[80px] left-6 right-6 h-[120px] bg-white border border-[rgba(26,26,26,0.15)] border-l-4 border-l-[#1a1a1a] p-4 shadow-sm cursor-pointer hover:shadow-md transition-shadow">
+                                <h4 className="text-[14px] font-medium text-[#1a1a1a]" style={{ fontFamily: "'Inter', sans-serif" }}>RTC Hearing: Santos v. Reyes</h4>
+                                <p className="text-[11px] text-[rgba(26,26,26,0.6)] mt-1" style={{ fontFamily: "'Inter', sans-serif" }}>09:00 AM - 10:30 AM • RTC Makati, Branch 61</p>
+                             </div>
+                        </div>
+                    </div>
+                </div>
+            )}
           </div>
 
           {/* Firm Filters */}

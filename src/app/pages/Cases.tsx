@@ -216,10 +216,10 @@ export function Cases() {
           ))}
         </div>
 
-        {/* Rows */}
         {paged.map((c) => (
           <div
             key={c.id}
+            onClick={() => window.location.href = `/cases/${c.id}`}
             className="grid grid-cols-[2fr_1.5fr_130px_1.5fr_130px] border-b border-[rgba(26,26,26,0.05)] px-6 py-5 hover:bg-[rgba(26,26,26,0.015)] cursor-pointer transition-colors"
           >
             <div>

@@ -173,10 +173,10 @@ export function Clients() {
           )}
         </div>
 
-        {/* Rows */}
         {paged.map((client) => (
           <div
             key={client.id}
+            onClick={() => window.location.href = `/clients/${client.id}`}
             className="grid grid-cols-[2fr_2fr_100px_2fr] border-b border-[rgba(26,26,26,0.05)] px-6 py-4 hover:bg-[rgba(26,26,26,0.015)] cursor-pointer transition-colors group"
           >
             <div className="flex items-center gap-3">

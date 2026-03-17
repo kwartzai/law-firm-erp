@@ -102,6 +102,7 @@ export function Dashboard() {
     <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-10">
       {/* Page Header */}
       <div className="mb-8">
+
         <p
           className="text-[11px] tracking-[2.4px] uppercase text-[rgba(26,26,26,0.5)] font-semibold mb-2"
           style={{ fontFamily: "'Inter', sans-serif" }}
@@ -116,7 +117,7 @@ export function Dashboard() {
             lineHeight: 1,
           }}
         >
-          Firm Overview
+          Bonifacio & Jacinto Law
         </h1>
       </div>
 
@@ -191,50 +192,50 @@ export function Dashboard() {
 
           {/* Table */}
           <div className="overflow-x-auto"><div className="min-w-[480px]">
-          <div className="border-b border-[rgba(26,26,26,0.1)] pb-px">
-            <div className="grid grid-cols-[2fr_1fr_120px_100px] py-3">
-              {["Case Name", "Client", "Status", "Activity"].map((h, i) => (
+            <div className="border-b border-[rgba(26,26,26,0.1)] pb-px">
+              <div className="grid grid-cols-[2fr_1fr_120px_100px] py-3">
+                {["Case Name", "Client", "Status", "Activity"].map((h, i) => (
+                  <span
+                    key={h}
+                    className={`text-[10px] font-bold tracking-[1.5px] uppercase text-[rgba(26,26,26,0.4)] ${i === 3 ? "text-right" : ""}`}
+                    style={{ fontFamily: "'Inter', sans-serif" }}
+                  >
+                    {h}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Table Rows */}
+            {recentCases.map((c, i) => (
+              <div
+                key={c.name}
+                className="grid grid-cols-[2fr_1fr_120px_100px] py-5 border-b border-[rgba(26,26,26,0.05)] hover:bg-white hover:shadow-sm transition-all cursor-pointer group"
+                onClick={() => navigate("/cases")}
+              >
                 <span
-                  key={h}
-                  className={`text-[10px] font-bold tracking-[1.5px] uppercase text-[rgba(26,26,26,0.4)] ${i === 3 ? "text-right" : ""}`}
+                  className="text-[16px] font-medium text-[#1a1a1a] group-hover:text-[#0f172a]"
                   style={{ fontFamily: "'Inter', sans-serif" }}
                 >
-                  {h}
+                  {c.name}
                 </span>
-              ))}
-            </div>
-          </div>
-
-          {/* Table Rows */}
-          {recentCases.map((c, i) => (
-            <div
-              key={c.name}
-              className="grid grid-cols-[2fr_1fr_120px_100px] py-5 border-b border-[rgba(26,26,26,0.05)] hover:bg-white hover:shadow-sm transition-all cursor-pointer group"
-              onClick={() => navigate("/cases")}
-            >
-              <span
-                className="text-[16px] font-medium text-[#1a1a1a] group-hover:text-[#0f172a]"
-                style={{ fontFamily: "'Inter', sans-serif" }}
-              >
-                {c.name}
-              </span>
-              <span
-                className="text-[14px] text-[rgba(26,26,26,0.7)] italic"
-                style={{ fontFamily: "'Lora', serif" }}
-              >
-                {c.client}
-              </span>
-              <div>
-                <StatusBadge status={c.status} type={c.statusType} />
+                <span
+                  className="text-[14px] text-[rgba(26,26,26,0.7)] italic"
+                  style={{ fontFamily: "'Lora', serif" }}
+                >
+                  {c.client}
+                </span>
+                <div>
+                  <StatusBadge status={c.status} type={c.statusType} />
+                </div>
+                <span
+                  className="text-[14px] text-[rgba(26,26,26,0.6)] text-right"
+                  style={{ fontFamily: "'Inter', sans-serif" }}
+                >
+                  {c.activity}
+                </span>
               </div>
-              <span
-                className="text-[14px] text-[rgba(26,26,26,0.6)] text-right"
-                style={{ fontFamily: "'Inter', sans-serif" }}
-              >
-                {c.activity}
-              </span>
-            </div>
-          ))}
+            ))}
           </div></div>
         </div>
 
