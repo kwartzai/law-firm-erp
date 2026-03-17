@@ -1,125 +1,314 @@
-import { Users, Briefcase, Clock, DollarSign, TrendingUp, AlertCircle } from 'lucide-react';
-import { Link } from 'react-router';
+import { useNavigate } from "react-router";
+import { TrendingUp, Minus, AlertCircle, Calendar } from "lucide-react";
 
 const stats = [
-  { name: 'Active Clients', value: '127', icon: Users, change: '+12%', changeType: 'positive' },
-  { name: 'Open Cases', value: '43', icon: Briefcase, change: '+5%', changeType: 'positive' },
-  { name: 'Billable Hours (MTD)', value: '342', icon: Clock, change: '+18%', changeType: 'positive' },
-  { name: 'Revenue (MTD)', value: '₱5,127,450', icon: DollarSign, change: '+23%', changeType: 'positive' },
+  {
+    label: "Active Clients",
+    value: "124",
+    trend: "+12% THIS MONTH",
+    trendUp: true,
+  },
+  {
+    label: "Open Cases",
+    value: "86",
+    trend: "STABLE",
+    trendUp: null,
+  },
+  {
+    label: "Billable Hours",
+    value: "312.5",
+    trend: "+18.2% VS LAST MONTH",
+    trendUp: true,
+  },
 ];
 
 const recentCases = [
-  { id: '1', name: 'De la Cruz v. Manila Enterprises', client: 'Roberto de la Cruz', status: 'Discovery', priority: 'High', nextDeadline: 'Mar 5, 2026' },
-  { id: '2', name: 'Estate Settlement - Santos', client: 'Maria Santos', status: 'In Progress', priority: 'Medium', nextDeadline: 'Mar 8, 2026' },
-  { id: '3', name: 'Labor Case - TechHub PH', client: 'TechHub Philippines Inc', status: 'Mediation', priority: 'High', nextDeadline: 'Mar 4, 2026' },
-  { id: '4', name: 'Illegal Dismissal - Reyes', client: 'Miguel Reyes', status: 'Pre-trial', priority: 'Medium', nextDeadline: 'Mar 15, 2026' },
+  {
+    name: "Estate Settlement of F. Dela Cruz",
+    client: "Dela Cruz Family",
+    status: "ACTIVE",
+    statusType: "active",
+    activity: "2h ago",
+  },
+  {
+    name: "Labor Compliance Review",
+    client: "Maharlika Foods Corp.",
+    status: "REVIEW",
+    statusType: "review",
+    activity: "Yesterday",
+  },
+  {
+    name: "Trademark Opposition - Sampaguita",
+    client: "Sampaguita Beauty, Inc.",
+    status: "DISCOVERY",
+    statusType: "discovery",
+    activity: "Mar 14",
+  },
+  {
+    name: "Land Titling Petition",
+    client: "Laguna Prime Holdings",
+    status: "ON-HOLD",
+    statusType: "onhold",
+    activity: "Mar 12",
+  },
 ];
 
-const upcomingDeadlines = [
-  { id: '1', title: 'File Motion to Dismiss', case: 'De la Cruz v. Manila Enterprises', date: 'Mar 4, 2026', daysLeft: 2 },
-  { id: '2', title: 'Discovery Deadline', case: 'De la Cruz v. Manila Enterprises', date: 'Mar 5, 2026', daysLeft: 3 },
-  { id: '3', title: 'Estate Documents Review', case: 'Estate Settlement - Santos', date: 'Mar 8, 2026', daysLeft: 6 },
-  { id: '4', title: 'NLRC Mediation', case: 'Labor Case - TechHub PH', date: 'Mar 10, 2026', daysLeft: 8 },
+const deadlines = [
+  {
+    tag: "URGENT",
+    tagColor: "#dc2626",
+    title: "Petition Filing: Dela Cruz Estate",
+    location: "RTC Makati, Branch 148",
+    time: "TOMORROW, 10:00 AM",
+    borderColor: "#dc2626",
+  },
+  {
+    tag: "SCHEDULED",
+    tagColor: "#1a1a1a",
+    title: "Mandatory Conference: Maharlika Foods",
+    location: "NLRC NCR, Quezon City",
+    time: "WEDNESDAY, 2:00 PM",
+    borderColor: "rgba(26,26,26,0.15)",
+  },
+  {
+    tag: "INTERNAL",
+    tagColor: "#1a1a1a",
+    title: "Contract Review",
+    location: "BGC Supply Agreement, Taguig",
+    time: "FRIDAY, EOD",
+    borderColor: "rgba(26,26,26,0.15)",
+  },
 ];
+
+function StatusBadge({ status, type }: { status: string; type: string }) {
+  if (type === "active") {
+    return (
+      <span className="inline-flex items-center px-2 py-1 bg-[#1a1a1a] text-white text-[10px] font-bold tracking-[-0.3px] uppercase">
+        {status}
+      </span>
+    );
+  }
+  return (
+    <span className="inline-flex items-center px-2 py-1 border border-[rgba(26,26,26,0.2)] text-[#1a1a1a] text-[10px] font-bold tracking-[-0.3px] uppercase">
+      {status}
+    </span>
+  );
+}
 
 export function Dashboard() {
+  const navigate = useNavigate();
+
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl text-slate-900">Dashboard</h1>
-        <p className="text-slate-600">Overview of your law firm operations</p>
+    <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-10">
+      {/* Page Header */}
+      <div className="mb-8">
+        <p
+          className="text-[11px] tracking-[2.4px] uppercase text-[rgba(26,26,26,0.5)] font-semibold mb-2"
+          style={{ fontFamily: "'Inter', sans-serif" }}
+        >
+          Overview
+        </p>
+        <h1
+          className="text-[32px] sm:text-[48px] text-[#1a1a1a]"
+          style={{
+            fontFamily: "'Lora', serif",
+            fontWeight: 700,
+            lineHeight: 1,
+          }}
+        >
+          Firm Overview
+        </h1>
       </div>
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        {stats.map((stat) => (
-          <div key={stat.name} className="p-6 bg-white border border-slate-200 rounded-lg">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-slate-600">{stat.name}</p>
-                <p className="mt-2 text-3xl text-slate-900">{stat.value}</p>
-              </div>
-              <div className="p-3 bg-blue-50 rounded-lg">
-                <stat.icon className="w-6 h-6 text-blue-600" />
-              </div>
+      {/* Stats Cards */}
+      <div className="bg-white border border-[rgba(26,26,26,0.1)] shadow-sm grid grid-cols-1 sm:grid-cols-3 mb-10">
+        {stats.map((stat, i) => (
+          <div
+            key={stat.label}
+            className={`px-6 sm:px-10 py-8 sm:py-10 flex flex-col justify-between ${i < 2 ? "border-b sm:border-b-0 sm:border-r border-[rgba(26,26,26,0.1)]" : ""}`}
+          >
+            <div>
+              <p
+                className="text-[14px] text-[rgba(26,26,26,0.6)] mb-2"
+                style={{ fontFamily: "'Inter', sans-serif", fontWeight: 500 }}
+              >
+                {stat.label}
+              </p>
+              <p
+                className="text-[36px] text-[#1a1a1a]"
+                style={{ fontFamily: "'Lora', serif", lineHeight: 1.1 }}
+              >
+                {stat.value}
+              </p>
             </div>
-            <div className="mt-4 flex items-center gap-1">
-              <TrendingUp className="w-4 h-4 text-green-600" />
-              <span className="text-sm text-green-600">{stat.change}</span>
-              <span className="text-sm text-slate-600">vs last month</span>
+            <div className="flex items-center gap-2 mt-8">
+              {stat.trendUp === true && (
+                <>
+                  <TrendingUp size={11} className="text-[#15803d]" />
+                  <span
+                    className="text-[11px] tracking-[0.6px] font-semibold text-[#15803d]"
+                    style={{ fontFamily: "'Inter', sans-serif" }}
+                  >
+                    {stat.trend}
+                  </span>
+                </>
+              )}
+              {stat.trendUp === null && (
+                <>
+                  <Minus size={11} className="text-[rgba(26,26,26,0.4)]" />
+                  <span
+                    className="text-[11px] tracking-[0.6px] font-semibold text-[rgba(26,26,26,0.4)]"
+                    style={{ fontFamily: "'Inter', sans-serif" }}
+                  >
+                    {stat.trend}
+                  </span>
+                </>
+              )}
             </div>
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+      {/* Main Content Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-8">
         {/* Recent Cases */}
-        <div className="bg-white border border-slate-200 rounded-lg">
-          <div className="flex items-center justify-between p-6 border-b border-slate-200">
-            <h2 className="text-lg text-slate-900">Recent Cases</h2>
-            <Link to="/cases" className="text-sm text-blue-600 hover:text-blue-700">
-              View all
-            </Link>
+        <div>
+          <div className="flex items-end justify-between mb-8">
+            <h2
+              className="text-[24px] text-[#0f172a]"
+              style={{ fontFamily: "'Lora', serif" }}
+            >
+              Recent Cases
+            </h2>
+            <button
+              onClick={() => navigate("/cases")}
+              className="text-[11px] font-bold tracking-[1.2px] uppercase text-[#0f172a] border-b border-[#1a1a1a] pb-[2px] hover:opacity-70 transition-opacity"
+              style={{ fontFamily: "'Inter', sans-serif" }}
+            >
+              View All Cases
+            </button>
           </div>
-          <div className="divide-y divide-slate-200">
-            {recentCases.map((case_) => (
-              <Link
-                key={case_.id}
-                to={`/cases/${case_.id}`}
-                className="block p-4 hover:bg-slate-50 transition-colors"
+
+          {/* Table */}
+          <div className="overflow-x-auto"><div className="min-w-[480px]">
+          <div className="border-b border-[rgba(26,26,26,0.1)] pb-px">
+            <div className="grid grid-cols-[2fr_1fr_120px_100px] py-3">
+              {["Case Name", "Client", "Status", "Activity"].map((h, i) => (
+                <span
+                  key={h}
+                  className={`text-[10px] font-bold tracking-[1.5px] uppercase text-[rgba(26,26,26,0.4)] ${i === 3 ? "text-right" : ""}`}
+                  style={{ fontFamily: "'Inter', sans-serif" }}
+                >
+                  {h}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          {/* Table Rows */}
+          {recentCases.map((c, i) => (
+            <div
+              key={c.name}
+              className="grid grid-cols-[2fr_1fr_120px_100px] py-5 border-b border-[rgba(26,26,26,0.05)] hover:bg-white hover:shadow-sm transition-all cursor-pointer group"
+              onClick={() => navigate("/cases")}
+            >
+              <span
+                className="text-[16px] font-medium text-[#1a1a1a] group-hover:text-[#0f172a]"
+                style={{ fontFamily: "'Inter', sans-serif" }}
               >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <h3 className="text-sm text-slate-900">{case_.name}</h3>
-                    <p className="mt-1 text-sm text-slate-600">{case_.client}</p>
-                  </div>
-                  <span
-                    className={`px-2 py-1 text-xs rounded-full ${
-                      case_.priority === 'High'
-                        ? 'bg-red-50 text-red-700'
-                        : 'bg-yellow-50 text-yellow-700'
-                    }`}
-                  >
-                    {case_.priority}
-                  </span>
-                </div>
-                <div className="mt-2 flex items-center justify-between text-sm">
-                  <span className="text-slate-600">Status: {case_.status}</span>
-                  <span className="text-slate-600">Due: {case_.nextDeadline}</span>
-                </div>
-              </Link>
-            ))}
-          </div>
+                {c.name}
+              </span>
+              <span
+                className="text-[14px] text-[rgba(26,26,26,0.7)] italic"
+                style={{ fontFamily: "'Lora', serif" }}
+              >
+                {c.client}
+              </span>
+              <div>
+                <StatusBadge status={c.status} type={c.statusType} />
+              </div>
+              <span
+                className="text-[14px] text-[rgba(26,26,26,0.6)] text-right"
+                style={{ fontFamily: "'Inter', sans-serif" }}
+              >
+                {c.activity}
+              </span>
+            </div>
+          ))}
+          </div></div>
         </div>
 
-        {/* Upcoming Deadlines */}
-        <div className="bg-white border border-slate-200 rounded-lg">
-          <div className="flex items-center justify-between p-6 border-b border-slate-200">
-            <h2 className="text-lg text-slate-900">Upcoming Deadlines</h2>
-            <Link to="/calendar" className="text-sm text-blue-600 hover:text-blue-700">
-              View calendar
-            </Link>
-          </div>
-          <div className="divide-y divide-slate-200">
-            {upcomingDeadlines.map((deadline) => (
-              <div key={deadline.id} className="p-4">
-                <div className="flex items-start gap-3">
-                  <div className={`mt-1 p-1 rounded ${deadline.daysLeft <= 3 ? 'bg-red-50' : 'bg-blue-50'}`}>
-                    <AlertCircle className={`w-4 h-4 ${deadline.daysLeft <= 3 ? 'text-red-600' : 'text-blue-600'}`} />
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-sm text-slate-900">{deadline.title}</h3>
-                    <p className="mt-1 text-sm text-slate-600">{deadline.case}</p>
-                    <div className="mt-2 flex items-center gap-3 text-xs text-slate-600">
-                      <span>{deadline.date}</span>
-                      <span className={deadline.daysLeft <= 3 ? 'text-red-600' : ''}>
-                        {deadline.daysLeft} days left
-                      </span>
-                    </div>
-                  </div>
+        {/* Deadlines Sidebar */}
+        <div>
+          <h2
+            className="text-[24px] text-[#0f172a] mb-6"
+            style={{ fontFamily: "'Lora', serif" }}
+          >
+            Deadlines
+          </h2>
+
+          <div className="flex flex-col gap-0">
+            {deadlines.map((d, i) => (
+              <div
+                key={d.title}
+                className={`border-l-2 pl-4 pb-6 ${i < deadlines.length - 1 ? "mb-0" : ""}`}
+                style={{ borderColor: d.borderColor }}
+              >
+                <div className="flex items-center gap-1 mb-2">
+                  {d.tag === "URGENT" && (
+                    <AlertCircle size={10} className="text-[#dc2626]" />
+                  )}
+                  <span
+                    className="text-[10px] font-semibold tracking-[1px] uppercase"
+                    style={{
+                      fontFamily: "'Inter', sans-serif",
+                      color:
+                        d.tagColor === "#dc2626"
+                          ? "#dc2626"
+                          : "rgba(26,26,26,0.5)",
+                    }}
+                  >
+                    {d.tag}
+                  </span>
                 </div>
+                <p
+                  className="text-[15px] font-medium text-[#1a1a1a] mb-1 leading-snug"
+                  style={{ fontFamily: "'Inter', sans-serif" }}
+                >
+                  {d.title}
+                </p>
+                <p
+                  className="text-[12px] text-[rgba(26,26,26,0.55)] mb-1"
+                  style={{ fontFamily: "'Inter', sans-serif" }}
+                >
+                  {d.location}
+                </p>
+                <p
+                  className="text-[10px] font-semibold tracking-[0.8px] uppercase text-[rgba(26,26,26,0.4)]"
+                  style={{ fontFamily: "'Inter', sans-serif" }}
+                >
+                  {d.time}
+                </p>
               </div>
             ))}
+          </div>
+
+          {/* Calendar CTA */}
+          <div className="bg-[#1a1a1a] p-6 mt-2 flex flex-col items-center text-center">
+            <Calendar size={24} className="text-white mb-4 opacity-70" />
+            <p
+              className="text-[14px] text-white leading-snug mb-5"
+              style={{ fontFamily: "'Inter', sans-serif", fontWeight: 300 }}
+            >
+              You have 4 more matters on your docket this week.
+            </p>
+            <button
+              onClick={() => navigate("/calendar")}
+              className="border border-white text-white text-[11px] font-semibold tracking-[1.5px] uppercase px-6 py-3 hover:bg-white hover:text-[#1a1a1a] transition-colors"
+              style={{ fontFamily: "'Inter', sans-serif" }}
+            >
+              View Calendar
+            </button>
           </div>
         </div>
       </div>

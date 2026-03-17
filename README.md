@@ -1,7 +1,7 @@
 
-  # Law Firm ERP
+  # Unified Law Firm ERP
 
-  This is a code bundle for Law Firm ERP. The original project is available at https://www.figma.com/design/2fu14BFsudQg6cmFmu1gVR/Law-Firm-ERP.
+  This is a code bundle for Unified Law Firm ERP. The original project is available at https://www.figma.com/design/Pmf6aBjS6mkcESviNSLs2t/Unified-Law-Firm-ERP.
 
   ## Running the code
 

@@ -1,11 +1,6 @@
-import { RouterProvider } from 'react-router';
-import { router } from './routes';
-import { TimerProvider } from './context/TimerContext';
+import { RouterProvider } from "react-router";
+import { router } from "./routes";
 
 export default function App() {
-  return (
-    <TimerProvider>
-      <RouterProvider router={router} />
-    </TimerProvider>
-  );
+  return <RouterProvider router={router} />;
 }

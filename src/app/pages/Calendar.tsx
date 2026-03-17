@@ -1,366 +1,168 @@
-import { ChevronLeft, ChevronRight, Plus, Clock, MapPin, Users } from 'lucide-react';
-import { useState } from 'react';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, DialogFooter } from '../components/ui/dialog';
+import { useState } from "react";
+import { ChevronLeft, ChevronRight, Plus, X } from "lucide-react";
 
-const events = [
+const DAYS = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+
+const upcomingEvents = [
   {
-    id: '1',
-    title: 'Client Meeting - De la Cruz',
-    type: 'Meeting',
-    case: 'De la Cruz v. Manila Enterprises',
-    time: '10:00 AM',
-    duration: '1 hour',
-    location: 'Conference Room A',
-    attendees: ['Atty. Juan dela Rosa', 'Roberto de la Cruz'],
-    date: 'Mar 2, 2026',
+    date: "MAR 19, 09:00 AM",
+    title: "RTC Hearing: Santos v. Reyes",
+    location: "RTC Makati, Branch 61. Lead counsel: Atty. Carla Mendoza.",
+    action: "VIEW CASE",
+    actionType: "case",
   },
   {
-    id: '2',
-    title: 'RTC Hearing',
-    type: 'Court',
-    case: 'Illegal Dismissal - Reyes',
-    time: '2:00 PM',
-    duration: '2 hours',
-    location: 'RTC Makati, Branch 142',
-    attendees: ['Atty. Sofia Cruz', 'Miguel Reyes'],
-    date: 'Mar 3, 2026',
+    date: "MAR 21, 02:30 PM",
+    title: "SEC Filing Deadline",
+    location:
+      "Maharlika Holdings. Submission of the General Information Sheet.",
+    action: "REVIEW DOCS",
+    actionType: "docs",
   },
   {
-    id: '3',
-    title: 'Discovery Deadline',
-    type: 'Deadline',
-    case: 'De la Cruz v. Manila Enterprises',
-    time: '5:00 PM',
-    duration: 'All day',
-    location: 'N/A',
-    attendees: ['Atty. Juan dela Rosa'],
-    date: 'Mar 5, 2026',
+    date: "MAR 24, 11:00 AM",
+    title: "Client Conference: Dela Cruz Estate",
+    location:
+      "Virtual meeting with heirs in Quezon City regarding estate settlement requirements.",
+    action: "JOIN MEETING",
+    actionType: "meeting",
   },
   {
-    id: '4',
-    title: 'NLRC Mediation',
-    type: 'Mediation',
-    case: 'Labor Case - TechHub PH',
-    time: '11:00 AM',
-    duration: '3 hours',
-    location: 'NLRC NCR Quezon City',
-    attendees: ['Atty. Juan dela Rosa', 'TechHub Philippines Inc'],
-    date: 'Mar 10, 2026',
-  },
-  {
-    id: '5',
-    title: 'Estate Settlement Review',
-    type: 'Meeting',
-    case: 'Estate Settlement - Santos',
-    time: '3:00 PM',
-    duration: '1.5 hours',
-    location: 'Office',
-    attendees: ['Atty. Carla Mendoza', 'Maria Santos'],
-    date: 'Mar 8, 2026',
+    date: "MAR 27, 05:00 PM",
+    title: "Partners' Docket Review",
+    location: "BGC office boardroom. Weekly litigation and collections update.",
+    action: null,
+    actionType: null,
   },
 ];
 
-const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+// Calendar events by day
+const calendarEvents: Record<number, string> = {
+  5: "RTC HEARING",
+  12: "MEDIATION",
+  15: "SEC FILING",
+  20: "CLIENT MTG",
+};
+
+function getDaysInMonth(year: number, month: number) {
+  return new Date(year, month + 1, 0).getDate();
+}
+
+function getFirstDayOfMonth(year: number, month: number) {
+  return new Date(year, month, 1).getDay();
+}
+
+const MONTHS = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
 
 export function Calendar() {
-  const [currentDate, setCurrentDate] = useState(new Date(2026, 2, 2)); // March 2, 2026
-  const [view, setView] = useState<'month' | 'week' | 'day'>('week');
+  const [currentDate, setCurrentDate] = useState(new Date(2026, 2, 1));
+  const [activeView, setActiveView] = useState<"MONTH" | "WEEK" | "DAY">(
+    "MONTH",
+  );
+  const [activeFilter, setActiveFilter] = useState("My Docket");
+  const [showNewEvent, setShowNewEvent] = useState(false);
+  const [newEvent, setNewEvent] = useState({
+    title: "",
+    date: "",
+    location: "",
+  });
 
-  const upcomingEvents = events.slice(0, 5);
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+  const daysInMonth = getDaysInMonth(year, month);
+  const firstDay = getFirstDayOfMonth(year, month);
 
-  const handlePrev = () => {
-    const newDate = new Date(currentDate);
-    if (view === 'month') newDate.setMonth(newDate.getMonth() - 1);
-    if (view === 'week') newDate.setDate(newDate.getDate() - 7);
-    if (view === 'day') newDate.setDate(newDate.getDate() - 1);
-    setCurrentDate(newDate);
-  };
+  const prevMonth = () => setCurrentDate(new Date(year, month - 1, 1));
+  const nextMonth = () => setCurrentDate(new Date(year, month + 1, 1));
 
-  const handleNext = () => {
-    const newDate = new Date(currentDate);
-    if (view === 'month') newDate.setMonth(newDate.getMonth() + 1);
-    if (view === 'week') newDate.setDate(newDate.getDate() + 7);
-    if (view === 'day') newDate.setDate(newDate.getDate() + 1);
-    setCurrentDate(newDate);
-  };
-
-  const handleToday = () => {
-    setCurrentDate(new Date(2026, 2, 2)); // Hardcoded today for demo purposes
-  };
-
-  const getDaysInMonth = (year: number, month: number) => {
-    return new Date(year, month + 1, 0).getDate();
-  };
-
-  const getFirstDayOfMonth = (year: number, month: number) => {
-    return new Date(year, month, 1).getDay();
-  };
-
-  const formatMonthYear = (date: Date) => {
-    return date.toLocaleString('default', { month: 'long', year: 'numeric' });
-  };
-
-  const renderMonthView = () => {
-    const year = currentDate.getFullYear();
-    const month = currentDate.getMonth();
-    const daysInMonth = getDaysInMonth(year, month);
-    const firstDay = getFirstDayOfMonth(year, month);
-    const days = [];
-
-    // Empty cells for days before the 1st
-    for (let i = 0; i < firstDay; i++) {
-      days.push(<div key={`empty-${i}`} className="min-h-24 bg-slate-50 border border-slate-200 rounded-lg"></div>);
-    }
-
-    // Days of the month
-    for (let i = 1; i <= daysInMonth; i++) {
-      const dateStr = `Mar ${i}, 2026`; // Simplified for demo to match hardcoded event dates
-      const dayEvents = events.filter(e => e.date === dateStr);
-      
-      days.push(
-        <div key={`day-${i}`} className="min-h-24 bg-white border border-slate-200 rounded-lg p-2">
-          <div className="text-sm text-slate-900 mb-1">{i}</div>
-          <div className="space-y-1">
-            {dayEvents.slice(0, 3).map(event => (
-              <div key={event.id} className="text-xs truncate bg-blue-50 text-blue-700 p-1 rounded">
-                {event.time} {event.title}
-              </div>
-            ))}
-            {dayEvents.length > 3 && (
-              <div className="text-xs text-slate-500 pl-1">+{dayEvents.length - 3} more</div>
-            )}
-          </div>
-        </div>
-      );
-    }
-
-    return (
-      <div className="p-4">
-        <div className="grid grid-cols-7 gap-2 mb-4">
-          {daysOfWeek.map((day) => (
-            <div key={day} className="text-center text-sm text-slate-600 py-2">
-              {day}
-            </div>
-          ))}
-        </div>
-        <div className="grid grid-cols-7 gap-2">
-          {days}
-        </div>
-      </div>
-    );
-  };
-
-  const renderWeekView = () => {
-    // For demo purposes, we'll hardcode the week of March 2, 2026
-    const weekDays = [null, 2, 3, 4, 5, 6, 7];
-    
-    return (
-      <div className="p-4">
-        <div className="grid grid-cols-7 gap-2 mb-4">
-          {daysOfWeek.map((day) => (
-            <div key={day} className="text-center text-sm text-slate-600 py-2">
-              {day}
-            </div>
-          ))}
-        </div>
-        <div className="grid grid-cols-7 gap-2">
-          {weekDays.map((day, index) => (
-            <div
-              key={index}
-              className={`border border-slate-200 rounded-lg p-2 min-h-24 ${
-                day === 2 ? 'bg-blue-50 border-blue-200' : 'bg-white'
-              }`}
-            >
-              {day && (
-                <>
-                  <div className={`text-sm mb-2 ${day === 2 ? 'text-blue-700' : 'text-slate-900'}`}>
-                    {day}
-                  </div>
-                  <div className="space-y-1">
-                    {events
-                      .filter((e) => e.date === `Mar ${day}, 2026`)
-                      .map((event) => (
-                        <div
-                          key={event.id}
-                          className={`text-xs p-1 rounded cursor-pointer ${
-                            event.type === 'Court'
-                              ? 'bg-red-100 text-red-700'
-                              : event.type === 'Deadline'
-                              ? 'bg-orange-100 text-orange-700'
-                              : 'bg-blue-100 text-blue-700'
-                          }`}
-                        >
-                          <div className="truncate">{event.title}</div>
-                          <div>{event.time}</div>
-                        </div>
-                      ))}
-                  </div>
-                </>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-    );
-  };
-
-  const renderDayView = () => {
-    const dateStr = `Mar ${currentDate.getDate()}, 2026`; // Simplified for demo
-    const dayEvents = events.filter(e => e.date === dateStr).sort((a, b) => a.time.localeCompare(b.time));
-
-    return (
-      <div className="p-4">
-        <h3 className="text-lg font-medium text-slate-900 mb-6">{currentDate.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })}</h3>
-        
-        {dayEvents.length === 0 ? (
-          <div className="text-center py-12 text-slate-500 border border-dashed border-slate-300 rounded-lg">
-            No events scheduled for this day.
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {dayEvents.map(event => (
-              <div key={event.id} className="flex gap-4 border border-slate-200 rounded-lg p-4 hover:border-blue-300 transition-colors">
-                <div className="w-24 shrink-0">
-                  <div className="font-medium text-slate-900">{event.time}</div>
-                  <div className="text-sm text-slate-500">{event.duration}</div>
-                </div>
-                <div className="w-1 bg-slate-200 rounded-full flex-shrink-0">
-                  <div className={`w-full h-full rounded-full ${
-                    event.type === 'Court' ? 'bg-red-500' :
-                    event.type === 'Deadline' ? 'bg-orange-500' :
-                    event.type === 'Mediation' ? 'bg-purple-500' : 'bg-blue-500'
-                  }`} />
-                </div>
-                <div className="flex-1">
-                  <div className="flex justify-between items-start mb-1">
-                    <h4 className="text-base font-medium text-slate-900">{event.title}</h4>
-                    <span className="text-xs font-medium px-2 py-1 rounded bg-slate-100 text-slate-600">
-                      {event.type}
-                    </span>
-                  </div>
-                  <div className="text-sm text-blue-600 mb-2">{event.case}</div>
-                  
-                  <div className="flex flex-wrap gap-4 text-sm text-slate-600">
-                    {event.location !== 'N/A' && (
-                      <div className="flex items-center gap-1">
-                        <MapPin className="w-4 h-4" />
-                        {event.location}
-                      </div>
-                    )}
-                    <div className="flex items-center gap-1">
-                      <Users className="w-4 h-4" />
-                      {event.attendees.join(', ')}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    );
-  };
+  // Build calendar grid
+  const cells: (number | null)[] = [];
+  for (let i = 0; i < firstDay; i++) cells.push(null);
+  for (let d = 1; d <= daysInMonth; d++) cells.push(d);
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="max-w-[1200px] mx-auto px-4 sm:px-6 py-10">
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row items-start justify-between gap-4 mb-8">
         <div>
-          <h1 className="text-2xl text-slate-900">Calendar</h1>
-          <p className="text-slate-600">Manage deadlines, hearings, and appointments</p>
+          <h1
+            className="text-[32px] sm:text-[48px] text-[#1a1a1a] mb-1"
+            style={{
+              fontFamily: "'Lora', serif",
+              fontWeight: 700,
+              lineHeight: 1,
+            }}
+          >
+            Calendar
+          </h1>
+          <p
+            className="text-[11px] font-semibold tracking-[2px] uppercase text-[rgba(26,26,26,0.4)] mt-2"
+            style={{ fontFamily: "'Inter', sans-serif" }}
+          >
+            {MONTHS[month].toUpperCase()} {year} • FIRM DOCKET
+          </p>
         </div>
-        <Dialog>
-          <DialogTrigger asChild>
-            <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-              <Plus className="w-4 h-4" />
-              New Event
-            </button>
-          </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-              <DialogTitle>Add New Event</DialogTitle>
-              <DialogDescription>
-                Schedule a new court hearing, deadline, or meeting.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="grid gap-4 py-4">
-              <div className="space-y-2">
-                <label htmlFor="title" className="text-sm font-medium">Event Title</label>
-                <input id="title" className="w-full px-3 py-2 border rounded-lg" placeholder="Event title" />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label htmlFor="date" className="text-sm font-medium">Date</label>
-                  <input id="date" type="date" className="w-full px-3 py-2 border rounded-lg" />
-                </div>
-                <div className="space-y-2">
-                  <label htmlFor="time" className="text-sm font-medium">Time</label>
-                  <input id="time" type="time" className="w-full px-3 py-2 border rounded-lg" />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="type" className="text-sm font-medium">Event Type</label>
-                <select id="type" className="w-full px-3 py-2 border rounded-lg bg-white">
-                  <option>Meeting</option>
-                  <option>Court</option>
-                  <option>Deadline</option>
-                  <option>Mediation</option>
-                </select>
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="case" className="text-sm font-medium">Associated Case</label>
-                <select id="case" className="w-full px-3 py-2 border rounded-lg bg-white">
-                  <option value="">Select Case...</option>
-                  {Array.from(new Set(events.map(e => e.case))).map(c => (
-                    <option key={c} value={c}>{c}</option>
-                  ))}
-                </select>
-              </div>
-              <div className="space-y-2">
-                <label htmlFor="location" className="text-sm font-medium">Location</label>
-                <input id="location" className="w-full px-3 py-2 border rounded-lg" placeholder="e.g. Conference Room A" />
-              </div>
-            </div>
-            <DialogFooter>
-              <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Save Event</button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        <button
+          onClick={() => setShowNewEvent(true)}
+          className="flex items-center gap-2 bg-[#1a1a1a] text-white px-6 py-3 text-[12px] font-semibold tracking-[0.5px] uppercase hover:bg-[#333] transition-colors mt-2"
+          style={{ fontFamily: "'Inter', sans-serif" }}
+        >
+          <Plus size={13} />
+          New Event
+        </button>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Calendar View */}
-        <div className="lg:col-span-2 bg-white border border-slate-200 rounded-lg">
-          {/* Calendar Header */}
-          <div className="p-4 border-b border-slate-200">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-lg text-slate-900">
-                {view === 'day' 
-                  ? currentDate.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
-                  : formatMonthYear(currentDate)
-                }
-              </h2>
-              <div className="flex items-center gap-2">
-                <button onClick={handlePrev} className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
-                  <ChevronLeft className="w-5 h-5 text-slate-600" />
-                </button>
-                <button onClick={handleToday} className="px-3 py-1 text-sm bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200">
-                  Today
-                </button>
-                <button onClick={handleNext} className="p-2 hover:bg-slate-100 rounded-lg transition-colors">
-                  <ChevronRight className="w-5 h-5 text-slate-600" />
-                </button>
-              </div>
+      {/* Main Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_300px] gap-8">
+        {/* Calendar */}
+        <div>
+          {/* Nav + View Toggle */}
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={prevMonth}
+                className="w-8 h-8 flex items-center justify-center border border-[rgba(26,26,26,0.12)] hover:bg-[rgba(26,26,26,0.04)] transition-colors"
+              >
+                <ChevronLeft size={14} />
+              </button>
+              <span
+                className="text-[18px] font-medium text-[#1a1a1a]"
+                style={{ fontFamily: "'Inter', sans-serif" }}
+              >
+                {MONTHS[month]} {year}
+              </span>
+              <button
+                onClick={nextMonth}
+                className="w-8 h-8 flex items-center justify-center border border-[rgba(26,26,26,0.12)] hover:bg-[rgba(26,26,26,0.04)] transition-colors"
+              >
+                <ChevronRight size={14} />
+              </button>
             </div>
-            <div className="flex gap-2">
-              {(['month', 'week', 'day'] as const).map((v) => (
+
+            <div className="flex items-center border border-[rgba(26,26,26,0.12)]">
+              {(["MONTH", "WEEK", "DAY"] as const).map((v) => (
                 <button
                   key={v}
-                  onClick={() => setView(v)}
-                  className={`px-4 py-2 rounded-lg text-sm capitalize transition-colors ${
-                    view === v
-                      ? 'bg-blue-100 text-blue-700'
-                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  onClick={() => setActiveView(v)}
+                  className={`px-4 py-2 text-[11px] font-semibold tracking-[0.5px] uppercase transition-colors ${
+                    activeView === v
+                      ? "bg-[#1a1a1a] text-white"
+                      : "text-[rgba(26,26,26,0.55)] hover:bg-[rgba(26,26,26,0.04)]"
                   }`}
+                  style={{ fontFamily: "'Inter', sans-serif" }}
                 >
                   {v}
                 </button>
@@ -368,61 +170,223 @@ export function Calendar() {
             </div>
           </div>
 
-          {/* Calendar Content */}
-          {view === 'month' && renderMonthView()}
-          {view === 'week' && renderWeekView()}
-          {view === 'day' && renderDayView()}
-        </div>
-
-        {/* Upcoming Events */}
-        <div className="bg-white border border-slate-200 rounded-lg">
-          <div className="p-4 border-b border-slate-200">
-            <h2 className="text-lg text-slate-900">Upcoming Events</h2>
-          </div>
-          <div className="p-4 space-y-4">
-            {upcomingEvents.map((event) => (
-              <div
-                key={event.id}
-                className="border border-slate-200 rounded-lg p-3 hover:border-blue-300 transition-colors cursor-pointer"
-              >
-                <div className="flex items-start justify-between mb-2">
-                  <h3 className="text-slate-900">{event.title}</h3>
+          {/* Calendar Grid */}
+          <div className="bg-white border border-[rgba(26,26,26,0.1)] shadow-sm">
+            {/* Day headers */}
+            <div className="grid grid-cols-7 border-b border-[rgba(26,26,26,0.08)]">
+              {DAYS.map((d) => (
+                <div key={d} className="py-3 text-center">
                   <span
-                    className={`px-2 py-0.5 text-xs rounded ${
-                      event.type === 'Court'
-                        ? 'bg-red-50 text-red-700'
-                        : event.type === 'Deadline'
-                        ? 'bg-orange-50 text-orange-700'
-                        : event.type === 'Mediation'
-                        ? 'bg-purple-50 text-purple-700'
-                        : 'bg-blue-50 text-blue-700'
-                    }`}
+                    className="text-[10px] font-bold tracking-[1.2px] uppercase text-[rgba(26,26,26,0.4)]"
+                    style={{ fontFamily: "'Inter', sans-serif" }}
                   >
-                    {event.type}
+                    {d}
                   </span>
                 </div>
-                <div className="space-y-1 text-sm text-slate-600">
-                  <div className="flex items-center gap-2">
-                    <Clock className="w-4 h-4" />
-                    <span>{event.date} at {event.time}</span>
-                  </div>
-                  {event.location !== 'N/A' && (
-                    <div className="flex items-center gap-2">
-                      <MapPin className="w-4 h-4" />
-                      <span>{event.location}</span>
-                    </div>
+              ))}
+            </div>
+
+            {/* Days Grid */}
+            <div className="grid grid-cols-7">
+              {cells.map((day, idx) => (
+                <div
+                  key={idx}
+                  className={`min-h-[90px] border-b border-r border-[rgba(26,26,26,0.06)] p-2 ${
+                    day
+                      ? "cursor-pointer hover:bg-[rgba(26,26,26,0.02)]"
+                      : "opacity-30"
+                  } ${idx % 7 === 6 ? "border-r-0" : ""}`}
+                >
+                  {day && (
+                    <>
+                      <div
+                        className={`w-7 h-7 flex items-center justify-center mb-1 ${
+                          day === 5 ? "bg-[#1a1a1a] text-white" : ""
+                        }`}
+                      >
+                        <span
+                          className={`text-[13px] ${day === 5 ? "text-white" : "text-[rgba(26,26,26,0.7)]"}`}
+                          style={{ fontFamily: "'Inter', sans-serif" }}
+                        >
+                          {day}
+                        </span>
+                      </div>
+                      {calendarEvents[day] && (
+                        <div className="bg-[rgba(26,26,26,0.07)] px-1.5 py-0.5 mt-1">
+                          <span
+                            className="text-[9px] font-bold tracking-[0.5px] uppercase text-[rgba(26,26,26,0.6)]"
+                            style={{ fontFamily: "'Inter', sans-serif" }}
+                          >
+                            {calendarEvents[day]}
+                          </span>
+                        </div>
+                      )}
+                    </>
                   )}
-                  <div className="flex items-center gap-2">
-                    <Users className="w-4 h-4" />
-                    <span>{event.attendees.length} attendees</span>
-                  </div>
                 </div>
-                <div className="mt-2 text-xs text-slate-600">{event.case}</div>
+              ))}
+            </div>
+          </div>
+
+          {/* Firm Filters */}
+          <div className="mt-5">
+            <p
+              className="text-[10px] font-bold tracking-[1.5px] uppercase text-[rgba(26,26,26,0.4)] mb-3"
+              style={{ fontFamily: "'Inter', sans-serif" }}
+            >
+              Firm Filters
+            </p>
+            <div className="flex items-center gap-2">
+              {["My Docket", "Litigation Team", "Manage"].map((f) => (
+                <button
+                  key={f}
+                  onClick={() => setActiveFilter(f)}
+                  className={`flex items-center gap-2 px-4 py-2 border text-[12px] font-medium transition-colors ${
+                    activeFilter === f
+                      ? "border-[#1a1a1a] text-[#1a1a1a] bg-[rgba(26,26,26,0.04)]"
+                      : "border-[rgba(26,26,26,0.12)] text-[rgba(26,26,26,0.55)] hover:border-[rgba(26,26,26,0.2)]"
+                  }`}
+                  style={{ fontFamily: "'Inter', sans-serif" }}
+                >
+                  {f === "Manage" ? null : (
+                    <span
+                      className={`w-2 h-2 rounded-full ${activeFilter === f ? "bg-[#1a1a1a]" : "bg-[rgba(26,26,26,0.25)]"}`}
+                    />
+                  )}
+                  {f}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Upcoming Schedule */}
+        <div>
+          <h2
+            className="text-[22px] text-[#1a1a1a] mb-5"
+            style={{ fontFamily: "'Lora', serif" }}
+          >
+            Upcoming Schedule
+          </h2>
+          <div className="flex flex-col gap-0">
+            {upcomingEvents.map((evt, i) => (
+              <div
+                key={i}
+                className={`border-b border-[rgba(26,26,26,0.08)] pb-5 mb-5`}
+              >
+                <p
+                  className="text-[10px] font-semibold tracking-[1px] uppercase text-[rgba(26,26,26,0.4)] mb-2"
+                  style={{ fontFamily: "'Inter', sans-serif" }}
+                >
+                  {evt.date}
+                </p>
+                <p
+                  className="text-[16px] font-medium text-[#1a1a1a] mb-2 leading-snug"
+                  style={{ fontFamily: "'Inter', sans-serif" }}
+                >
+                  {evt.title}
+                </p>
+                <p
+                  className="text-[12px] text-[rgba(26,26,26,0.55)] mb-3 leading-snug"
+                  style={{ fontFamily: "'Inter', sans-serif" }}
+                >
+                  {evt.location}
+                </p>
+                {evt.action && (
+                  <button
+                    className="text-[10px] font-bold tracking-[1.2px] uppercase text-[#1a1a1a] border-b border-[#1a1a1a] pb-[1px] hover:opacity-60 transition-opacity"
+                    style={{ fontFamily: "'Inter', sans-serif" }}
+                  >
+                    {evt.action}
+                  </button>
+                )}
               </div>
             ))}
           </div>
         </div>
       </div>
+
+      {/* New Event Modal */}
+      {showNewEvent && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[rgba(0,0,0,0.4)]"
+          onClick={() => setShowNewEvent(false)}
+        >
+          <div
+            className="bg-white w-full max-w-[480px] mx-4 p-8"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h2
+                className="text-[22px] text-[#1a1a1a]"
+                style={{ fontFamily: "'Lora', serif" }}
+              >
+                New Event
+              </h2>
+              <button
+                onClick={() => setShowNewEvent(false)}
+                className="text-[rgba(26,26,26,0.4)] hover:text-[#1a1a1a]"
+              >
+                <X size={18} />
+              </button>
+            </div>
+            <div className="flex flex-col gap-4">
+              {[
+                {
+                  label: "Event Title",
+                  field: "title",
+                  placeholder: "e.g. RTC Hearing: Santos v. Reyes",
+                },
+                {
+                  label: "Date & Time",
+                  field: "date",
+                  placeholder: "e.g. Mar 21, 2026, 09:00 AM",
+                },
+                {
+                  label: "Location / Notes",
+                  field: "location",
+                  placeholder: "e.g. RTC Makati, Branch 61",
+                },
+              ].map(({ label, field, placeholder }) => (
+                <div key={field}>
+                  <label
+                    className="block text-[11px] font-semibold tracking-[1px] uppercase text-[rgba(26,26,26,0.5)] mb-2"
+                    style={{ fontFamily: "'Inter', sans-serif" }}
+                  >
+                    {label}
+                  </label>
+                  <input
+                    type="text"
+                    placeholder={placeholder}
+                    value={(newEvent as any)[field]}
+                    onChange={(e) =>
+                      setNewEvent({ ...newEvent, [field]: e.target.value })
+                    }
+                    className="w-full border border-[rgba(26,26,26,0.15)] px-4 py-3 text-[14px] text-[#1a1a1a] outline-none focus:border-[#1a1a1a] transition-colors"
+                    style={{ fontFamily: "'Inter', sans-serif" }}
+                  />
+                </div>
+              ))}
+            </div>
+            <div className="flex gap-3 mt-8">
+              <button
+                onClick={() => setShowNewEvent(false)}
+                className="flex-1 border border-[rgba(26,26,26,0.2)] py-3 text-[12px] font-semibold tracking-[0.5px] text-[#1a1a1a] hover:bg-[rgba(26,26,26,0.04)] transition-colors"
+                style={{ fontFamily: "'Inter', sans-serif" }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => setShowNewEvent(false)}
+                className="flex-1 bg-[#1a1a1a] text-white py-3 text-[12px] font-semibold tracking-[0.5px] hover:bg-[#333] transition-colors"
+                style={{ fontFamily: "'Inter', sans-serif" }}
+              >
+                Create Event
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
