@@ -66,6 +66,7 @@ export function TimeTracking() {
   const [elapsed, setElapsed] = useState(0);
   const [selectedMatter, setSelectedMatter] = useState("");
   const [description, setDescription] = useState("");
+  const [hourlyRate, setHourlyRate] = useState("");
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
@@ -180,49 +181,66 @@ export function TimeTracking() {
             </div>
 
             <div className="flex flex-col gap-3 w-full sm:w-auto mt-4 sm:mt-0">
-               <div className="flex flex-wrap items-center gap-3">
-                 {/* Matter Select */}
-                 <select
-                   value={selectedMatter}
-                   onChange={(e) => setSelectedMatter(e.target.value)}
-                   disabled={isRunning}
-                   className="flex-1 sm:flex-none border border-[rgba(26,26,26,0.15)] px-4 py-2.5 text-[12px] text-[#1a1a1a] bg-white outline-none disabled:opacity-50 min-w-[220px]"
-                   style={{ fontFamily: "'Inter', sans-serif" }}
-                 >
-                   <option value="">Select Case Matter</option>
-                   {caseMatters.map((m) => (
-                     <option key={m} value={m}>
-                       {m}
-                     </option>
-                   ))}
-                 </select>
+              <div className="flex flex-wrap items-center gap-3">
+                {/* Matter Select */}
+                <select
+                  value={selectedMatter}
+                  onChange={(e) => setSelectedMatter(e.target.value)}
+                  disabled={isRunning}
+                  className="flex-1 sm:flex-none border border-[rgba(26,26,26,0.15)] px-4 py-2.5 text-[12px] text-[#1a1a1a] bg-white outline-none disabled:opacity-50 min-w-[220px]"
+                  style={{ fontFamily: "'Inter', sans-serif" }}
+                >
+                  <option value="">Select Case Matter</option>
+                  {caseMatters.map((m) => (
+                    <option key={m} value={m}>
+                      {m}
+                    </option>
+                  ))}
+                </select>
 
-                 {/* Start/Stop Button */}
-                 <button
-                   onClick={handleStartStop}
-                   disabled={!isRunning && !selectedMatter}
-                   className={`flex items-center justify-center gap-2 px-6 py-3 text-[12px] font-semibold tracking-[0.5px] uppercase transition-colors disabled:opacity-40 min-w-[140px] ${
-                     isRunning
-                       ? "bg-[#dc2626] text-white hover:bg-[#b91c1c]"
-                       : "bg-[#1a1a1a] text-white hover:bg-[#333]"
-                   }`}
-                   style={{ fontFamily: "'Inter', sans-serif" }}
-                 >
-                   {isRunning ? <Square size={13} /> : <Play size={13} />}
-                   {isRunning ? "Stop Timer" : "Start Timer"}
-                 </button>
-               </div>
-               
-               {/* Description Input */}
-               <input
-                 type="text"
-                 value={description}
-                 onChange={(e) => setDescription(e.target.value)}
-                 disabled={isRunning}
-                 placeholder="What are you working on? (Optional)"
-                 className="w-full border border-[rgba(26,26,26,0.15)] px-4 py-2.5 text-[13px] text-[#1a1a1a] outline-none focus:border-[#1a1a1a] placeholder-[rgba(26,26,26,0.4)] transition-colors disabled:opacity-50 disabled:bg-[rgba(26,26,26,0.02)]"
-                 style={{ fontFamily: "'Inter', sans-serif" }}
-               />
+                {/* Start/Stop Button */}
+                <button
+                  onClick={handleStartStop}
+                  disabled={!isRunning && !selectedMatter}
+                  className={`flex items-center justify-center gap-2 px-6 py-3 text-[12px] font-semibold tracking-[0.5px] uppercase transition-colors disabled:opacity-40 min-w-[140px] ${isRunning
+                      ? "bg-[#dc2626] text-white hover:bg-[#b91c1c]"
+                      : "bg-[#1a1a1a] text-white hover:bg-[#333]"
+                    }`}
+                  style={{ fontFamily: "'Inter', sans-serif" }}
+                >
+                  {isRunning ? <Square size={13} /> : <Play size={13} />}
+                  {isRunning ? "Stop Timer" : "Start Timer"}
+                </button>
+              </div>
+
+              <div className="flex flex-col sm:flex-row items-center gap-3 w-full">
+                {/* Description Input */}
+                <input
+                  type="text"
+                  value={description}
+                  onChange={(e) => setDescription(e.target.value)}
+                  disabled={isRunning}
+                  placeholder="What are you working on? (Optional)"
+                  className="flex-1 w-full border border-[rgba(26,26,26,0.15)] px-4 py-2.5 text-[13px] text-[#1a1a1a] outline-none focus:border-[#1a1a1a] placeholder-[rgba(26,26,26,0.4)] transition-colors disabled:opacity-50 disabled:bg-[rgba(26,26,26,0.02)]"
+                  style={{ fontFamily: "'Inter', sans-serif" }}
+                />
+
+                {/* Hourly Rate Input */}
+                <div className="relative w-full sm:w-[140px] flex-shrink-0">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-[13px] text-[rgba(26,26,26,0.5)]">₱</span>
+                  <input
+                    type="number"
+                    value={hourlyRate}
+                    onChange={(e) => setHourlyRate(e.target.value)}
+                    disabled={isRunning}
+                    placeholder="Rate/hr"
+                    className="w-full border border-[rgba(26,26,26,0.15)] pl-7 pr-4 py-2.5 text-[13px] text-[#1a1a1a] outline-none focus:border-[#1a1a1a] placeholder-[rgba(26,26,26,0.4)] transition-colors disabled:opacity-50 disabled:bg-[rgba(26,26,26,0.02)]"
+                    style={{ fontFamily: "'Inter', sans-serif" }}
+                    min="0"
+                    step="0.01"
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>
